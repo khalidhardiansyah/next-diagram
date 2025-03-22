@@ -1,16 +1,18 @@
 "use client";
 import mermaid from "mermaid";
 import { useEffect } from "react";
-export default function MermaidRender() {
+export default function MermaidRender({ syntax }: { syntax: string }) {
   useEffect(() => {
     mermaid.initialize({ startOnLoad: true });
-  });
+
+    if (syntax) {
+      mermaid.contentLoaded();
+    }
+  }, [syntax]);
   return (
-    <pre className="mermaid">
-      {`    graph LR
-A --- B
-B-->C[fa:fa-ban forbidden]
-B-->D(fa:fa-spinner);`}
-    </pre>
+    <div className="mermaid">
+      {`    ${syntax.replaceAll("```", "").replace("mermaid", "")}
+      `}
+    </div>
   );
 }
