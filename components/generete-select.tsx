@@ -1,3 +1,5 @@
+import { ChangeEventHandler } from "react";
+
 const diagrams = [
   {
     value: "class diagram",
@@ -17,9 +19,14 @@ const diagrams = [
   },
 ];
 
-function GenerateSelect() {
+function GenerateSelect({
+  onSelect,
+}: {
+  onSelect: ChangeEventHandler<HTMLSelectElement>;
+}) {
   return (
     <select
+      onChange={onSelect}
       name="select_diagram"
       id="select_diagram"
       defaultValue="class diagram"

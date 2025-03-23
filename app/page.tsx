@@ -5,11 +5,14 @@ import GenerateSelect from "@/components/generete-select";
 import MermaidRender from "@/components/mermaid-render";
 import { useState, FormEvent } from "react";
 export default function Home() {
-  const [loading, setloading] = useState<boolean>(true);
   const [response, setResponse] = useState<string>("");
+  const [type, setType] = useState<string>("class diagram");
+  const [show, setShow] = useState<boolean>();
+  const [loading, setLoading] = useState<boolean>();
   async function generateDiagram(event: FormEvent<HTMLFormElement>) {
+    setShow(false);
+    setLoading(true);
     event.preventDefault();
-    setloading(true);
     const formData = new FormData(event.currentTarget);
     const response = await fetch("/api/route", {
       method: "POST",
@@ -18,20 +21,29 @@ export default function Home() {
 
     const data = await response.json();
     setResponse(data.data);
-    setloading(false);
+    setShow(true);
+    setLoading(false);
   }
 
   return (
     <main className=" min-h-screen min-w-screen grid justify-items-center items-center">
-      <div className="container bg-slate-50 rounded-lg border border-indigo-200 shadow gap-3.5 py-7 px-5 h-3/5 w-4/6 flex">
-        <form onSubmit={generateDiagram} className=" h-full flex flex-col">
+      <div className=" bg-slate-50 rounded-lg border border-indigo-200 shadow md:gap-3.5 py-7 px-5 h-4/5 md:h-3/5 md:w-4/6 flex flex-col md:flex-row">
+        <form
+          onSubmit={generateDiagram}
+          className=" md:h-full   flex flex-col "
+        >
           <GenerateTextArea />
-          <div className="flex mt-3 space-x-2">
-            <GenerateSelect />
+          <div className="flex my-3 md:mt-3 space-x-2">
+            <GenerateSelect onSelect={(e) => setType(e.currentTarget.value)} />
             <GenerateButton />
           </div>
         </form>
-        {loading ? <span>xxx</span> : <MermaidRender syntax={response} />}
+        <MermaidRender
+          syntax={response}
+          show={show}
+          type={type}
+          loading={loading}
+        />
       </div>
     </main>
   );
