@@ -20,10 +20,11 @@ export async function POST(req: Request) {
   const input = formData.get("generate");
   const tipeDiagram = formData.get("select_diagram");
 
-  const prompt = `buatkan ${tipeDiagram} dalam format Mermaid.js dari deskripsi berikut :${input} tanpa tulisan "mermaid" hapus penjelasan sehingga hanya menyisakan syntax mermaid.
-  mermaid syntax tidak ada tipe data enum. hilangkan tanda backtick
+  const prompt = `buatkan ${tipeDiagram} dalam format Mermaid.js dari deskripsi berikut :${input} tanpa penjelasan sehingga hanya menyisakan syntax mermaid.
+  mermaid syntax tidak ada tipe data enum. jangan gunakan primary key dan foreign key.
   `;
   const result = await model.generateContent(prompt);
+
   return NextResponse.json(
     {
       data: result.response.text(),

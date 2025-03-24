@@ -3,12 +3,13 @@ import GenerateButton from "@/components/generate-button";
 import GenerateTextArea from "@/components/generate-textarea";
 import GenerateSelect from "@/components/generete-select";
 import MermaidRender from "@/components/mermaid-render";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useRef } from "react";
 export default function Home() {
   const [response, setResponse] = useState<string>("");
   const [type, setType] = useState<string>("class diagram");
   const [show, setShow] = useState<boolean>();
   const [loading, setLoading] = useState<boolean>();
+  const mermaid = useRef(null);
   async function generateDiagram(event: FormEvent<HTMLFormElement>) {
     setShow(false);
     setLoading(true);
@@ -25,25 +26,35 @@ export default function Home() {
     setLoading(false);
   }
 
+  function download() {
+    mermaid.current.download();
+  }
+
   return (
-    <main className=" min-h-screen min-w-screen grid justify-items-center items-center">
-      <div className=" bg-slate-50 rounded-lg border border-indigo-200 shadow md:gap-3.5 py-7 px-5 h-4/5 md:h-3/5 md:w-4/6 flex flex-col md:flex-row">
-        <form
-          onSubmit={generateDiagram}
-          className=" md:h-full   flex flex-col "
-        >
+    <main className=" min-h-screen min-w-screen grid justify-items-center items-center overflow-hidden">
+      <div className=" bg-slate-50 rounded-lg border border-indigo-200 shadow md:gap-3.5 py-7 px-5 h-4/5  md:w-4/6 flex flex-col">
+        <form onSubmit={generateDiagram} className="flex flex-col">
           <GenerateTextArea />
-          <div className="flex my-3 md:mt-3 space-x-2">
+          <div className="flex my-3 md:mt-3 space-x-2 ">
             <GenerateSelect onSelect={(e) => setType(e.currentTarget.value)} />
             <GenerateButton />
           </div>
         </form>
         <MermaidRender
+          ref={mermaid}
           syntax={response}
           show={show}
           type={type}
           loading={loading}
         />
+
+        <button
+          type="button"
+          className=" cursor-pointer bg-gray-700 text-white hover:bg-gray-950"
+          onClick={download}
+        >
+          download
+        </button>
       </div>
     </main>
   );

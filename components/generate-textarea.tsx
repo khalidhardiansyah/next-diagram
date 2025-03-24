@@ -3,7 +3,7 @@ function GenerateTextArea() {
   return (
     <textarea
       name="generate"
-      className="border h-48 min-h-24 p-2 w-full rounded-lg  md:flex-1 "
+      className="border sm:min-h-24 max-h-24 p-2  w-full rounded-lg "
       placeholder="ceritakan case anda"
     ></textarea>
   );
