@@ -1,15 +1,16 @@
 "use client";
+import DownloadButton from "@/components/download-button";
 import GenerateButton from "@/components/generate-button";
 import GenerateTextArea from "@/components/generate-textarea";
 import GenerateSelect from "@/components/generete-select";
-import MermaidRender from "@/components/mermaid-render";
+import MermaidRender, { Handle } from "@/components/mermaid-render";
 import { useState, FormEvent, useRef } from "react";
 export default function Home() {
   const [response, setResponse] = useState<string>("");
   const [type, setType] = useState<string>("class diagram");
   const [show, setShow] = useState<boolean>();
   const [loading, setLoading] = useState<boolean>();
-  const mermaid = useRef(null);
+  const mermaid = useRef<Handle>(null);
   async function generateDiagram(event: FormEvent<HTMLFormElement>) {
     setShow(false);
     setLoading(true);
@@ -27,7 +28,7 @@ export default function Home() {
   }
 
   function download() {
-    mermaid.current.download();
+    mermaid.current?.download();
   }
 
   return (
@@ -48,13 +49,7 @@ export default function Home() {
           loading={loading}
         />
 
-        <button
-          type="button"
-          className=" cursor-pointer bg-gray-700 text-white hover:bg-gray-950"
-          onClick={download}
-        >
-          download
-        </button>
+        {show && <DownloadButton handleDownload={download} />}
       </div>
     </main>
   );

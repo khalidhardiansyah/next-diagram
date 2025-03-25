@@ -1,18 +1,28 @@
 "use client";
 import mermaid from "mermaid";
-import { Ref, RefObject, useEffect, useImperativeHandle, useRef } from "react";
+import {
+  Ref,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
-import ZoomButtons from "./zoom-buttons";
-import { btoa } from "buffer";
-import { unescape } from "querystring";
 import { toPng } from "html-to-image";
+import ControllButtons from "./control-buttons";
+import { AnimatePresence, motion } from "motion/react";
+
+export type Handle = {
+  download: () => void;
+};
 
 interface mermaidType {
   syntax: string | null;
   show: boolean | undefined;
   type: string;
   loading: boolean | undefined;
-  ref: any;
+  ref: Ref<Handle>;
 }
 
 export default function MermaidRender({
@@ -31,8 +41,14 @@ export default function MermaidRender({
     },
   });
   const typeDiagram = useRef<string>("");
+  const [error, setError] = useState<string>("");
+  const mermaidRef = useRef<HTMLDivElement>(null);
+  const graphContent = useMemo(
+    () => syntax?.replaceAll("```", "").replace("mermaid", ""),
+    [syntax]
+  );
+
   useEffect(() => {
-    const graphContent = syntax?.replaceAll("```", "").replace("mermaid", "");
     const drawDiagram = async function () {
       const element = document.querySelector(".mermaid");
       try {
@@ -43,22 +59,23 @@ export default function MermaidRender({
           element.innerHTML = svg;
         }
       } catch (error) {
-        console.log(error);
+        setError("Error silahkan generate lagi");
       }
     };
 
     if (syntax) {
       drawDiagram();
     }
-  }, [syntax]);
+  }, [syntax, graphContent]);
 
   useImperativeHandle(
     ref,
     () => {
       return {
         async download() {
-          if (show) {
-            const svgElement = document.querySelector("#mermaid");
+          const svgElement =
+            mermaidRef.current?.querySelector<HTMLElement>("#mermaid");
+          if (svgElement) {
             toPng(svgElement, {
               quality: 1,
               pixelRatio: 5,
@@ -76,66 +93,68 @@ export default function MermaidRender({
         },
       };
     },
-    [show]
+    []
   );
 
   return (
-    <div
-      className=" rounded-lg bg-zinc-100 flex-1 max-h-96 overflow-auto"
-      ref={ref}
-    >
-      {show && (
-        <TransformWrapper
-          initialScale={1}
-          pinch={{ step: 5, disabled: false }}
-          panning={{ wheelPanning: true, excluded: [] }}
-          limitToBounds={false}
-          minScale={0.1}
-          centerOnInit={true}
-          centerZoomedOut={true}
-          disablePadding={true}
-        >
-          {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
-            <>
-              <div className=" absolute m-3 flex z-20 space-x-3.5">
-                <button
-                  onClick={() => zoomIn()}
-                  className="px-4 bg-black text-white"
+    <div className="rounded-lg bg-zinc-100 flex-1 md:max-h-96 overflow-auto">
+      <AnimatePresence>
+        {show ? (
+          <TransformWrapper
+            initialScale={1}
+            pinch={{ step: 5, disabled: false }}
+            panning={{ wheelPanning: true, excluded: [] }}
+            limitToBounds={false}
+            minScale={0.1}
+            centerOnInit={true}
+            centerZoomedOut={true}
+            disablePadding={true}
+          >
+            {
+              <>
+                <ControllButtons />
+                <TransformComponent
+                  wrapperClass="min-h-full min-w-full flex justify-center items-center p-20"
+                  contentClass=" min-w-full min-h-full flex justify-center items-center"
                 >
-                  +
-                </button>
-                <button
-                  onClick={() => zoomOut()}
-                  className="px-4 bg-black text-white"
-                >
-                  -
-                </button>
-                <button
-                  onClick={() => resetTransform()}
-                  className="px-4 bg-black text-white"
-                >
-                  x
-                </button>
-              </div>
-              <TransformComponent
-                wrapperClass=" min-h-full min-w-full  relative flex justify-center items-center p-20"
-                contentClass=" min-w-full min-h-full flex justify-center items-center"
-              >
-                <div className="mermaid min-w-full min-h-full"></div>
-              </TransformComponent>
-            </>
-          )}
-        </TransformWrapper>
+                  <div
+                    className="mermaid min-w-full min-h-full"
+                    ref={mermaidRef}
+                  ></div>
+                </TransformComponent>
+              </>
+            }
+          </TransformWrapper>
+        ) : loading ? (
+          <motion.div
+            className="w-full h-full grid place-items-center"
+            key="modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            Loading...
+          </motion.div>
+        ) : (
+          <motion.div
+            className="w-full h-full grid place-items-center"
+            key="modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {type}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {error && (
+        <div className="w-full h-full grid place-items-center">{error}</div>
       )}
     </div>
   );
 }
 
-// (
-//   <div className=" capitalize  h-full w-full  grid place-items-center">
-//     {type}
-//   </div>
-// )}
 // {loading && (
 //   <div className=" h-full w-full  grid place-items-center">
 //     loading....
