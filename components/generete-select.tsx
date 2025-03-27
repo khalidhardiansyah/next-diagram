@@ -30,7 +30,7 @@ function GenerateSelect({
       name="select_diagram"
       id="select_diagram"
       defaultValue="class diagram"
-      className="min-w-36 basis-3xs  min-h-10 border rounded-lg px-2 capitalize "
+      className="border rounded-lg px-2 capitalize "
     >
       {diagrams.map((item, index) => (
         <option key={index} value={item.value} className="block p-6">
