@@ -1,5 +1,6 @@
+"use client";
 import React from "react";
-
+import { Download } from "@phosphor-icons/react";
 type DownloadButtonProps = {
   handleDownload: React.MouseEventHandler<HTMLButtonElement>;
 };
@@ -8,10 +9,11 @@ function DownloadButton({ handleDownload }: DownloadButtonProps) {
   return (
     <button
       type="button"
-      className=" cursor-pointer mt-3 md:mt-0 tracking-wider bg-gray-700 text-white hover:bg-gray-950 min-w-24 max-w-36 min-h-10 capitalize rounded-lg"
+      className="cursor-pointer bg-gray-600  min-h-12 tracking-wide  flex justify-center items-center text-white rounded-lg  hover:bg-gray-700 transition-colors delay-75 ease-in-out space-x-1.5 capitalize w-full"
       onClick={handleDownload}
     >
-      download
+      <Download size={24} />
+      <span className="mt-1.5">download</span>
     </button>
   );
 }

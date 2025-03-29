@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
+import { Stack } from "@phosphor-icons/react";
 import mermaid from "mermaid";
 import {
   Ref,
@@ -97,66 +99,68 @@ export default function MermaidRender({
   );
 
   return (
-    <div className="rounded-lg bg-zinc-100 flex-1 md:max-h-96 overflow-auto">
-      <AnimatePresence>
-        {show ? (
-          <TransformWrapper
-            initialScale={1}
-            pinch={{ step: 5, disabled: false }}
-            panning={{ wheelPanning: true, excluded: [] }}
-            limitToBounds={false}
-            minScale={0.1}
-            centerOnInit={true}
-            centerZoomedOut={true}
-            disablePadding={true}
-          >
-            {
-              <>
-                <ControllButtons />
-                <TransformComponent
-                  wrapperClass="min-h-full min-w-full flex justify-center items-center p-20"
-                  contentClass=" min-w-full min-h-full flex justify-center items-center"
+    <div className="rounded-lg border border-dashed bg-neutral-50  py-5 h-full overflow-auto ">
+      {show ? (
+        <TransformWrapper
+          initialScale={1}
+          pinch={{ step: 5, disabled: false }}
+          panning={{ wheelPanning: true, excluded: [] }}
+          limitToBounds={false}
+          minScale={0.1}
+          centerOnInit={true}
+          centerZoomedOut={true}
+          disablePadding={true}
+        >
+          {
+            <>
+              <ControllButtons />
+              <TransformComponent
+                wrapperClass="min-h-full min-w-full flex justify-center items-center p-20"
+                contentClass=" min-w-full min-h-full flex justify-center items-center"
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
                 >
                   <div
                     className="mermaid min-w-full min-h-full"
                     ref={mermaidRef}
                   ></div>
-                </TransformComponent>
-              </>
-            }
-          </TransformWrapper>
-        ) : loading ? (
-          <motion.div
-            className="w-full h-full grid place-items-center"
-            key="modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            Loading...
-          </motion.div>
-        ) : (
-          <motion.div
-            className="w-full h-full grid place-items-center"
-            key="modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            {type}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+                </motion.div>
+              </TransformComponent>
+            </>
+          }
+        </TransformWrapper>
+      ) : loading ? (
+        <motion.div
+          className="w-full h-full grid place-items-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          Loading...
+        </motion.div>
+      ) : (
+        <motion.div
+          className="w-full h-full grid place-items-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <div className=" grid place-items-center gap-y-4">
+            <Stack size={45} className=" fill-zinc-300" />
+            <span className=" capitalize text-zinc-300">
+              {type} akan muncul disini setelah diproses
+            </span>
+          </div>
+        </motion.div>
+      )}
       {error && (
-        <div className="w-full h-full grid place-items-center">{error}</div>
+        <div className="w-full h-full grid place-items-center text-red-600">
+          {error}
+        </div>
       )}
     </div>
   );
 }
-
-// {loading && (
-//   <div className=" h-full w-full  grid place-items-center">
-//     loading....
-//   </div>
-// )}
