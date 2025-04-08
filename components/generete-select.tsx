@@ -22,7 +22,7 @@ const diagrams = [
 function GenerateSelect({
   onSelect,
 }: {
-  onSelect: ChangeEventHandler<HTMLSelectElement>;
+  onSelect?: ChangeEventHandler<HTMLSelectElement>;
 }) {
   return (
     <select
