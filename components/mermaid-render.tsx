@@ -53,6 +53,7 @@ export default function MermaidRender({
   useEffect(() => {
     const drawDiagram = async function () {
       const element = document.querySelector(".mermaid");
+      setError("");
       try {
         const graph = `${graphContent}`;
         typeDiagram.current = mermaid.detectType(graph);
@@ -99,8 +100,8 @@ export default function MermaidRender({
   );
 
   return (
-    <div className="rounded-lg border border-dashed bg-neutral-50  py-5 h-full overflow-auto ">
-      {show ? (
+    <div className="rounded-lg border border-dashed bg-neutral-50 py-5 h-full min-h-96 overflow-auto ">
+      {show && !loading ? (
         <TransformWrapper
           initialScale={1}
           pinch={{ step: 5, disabled: false }}
