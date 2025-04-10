@@ -112,7 +112,7 @@ export default function MermaidRender({
           centerZoomedOut={true}
           disablePadding={true}
         >
-          {
+          {!error.length && (
             <>
               <ControllButtons />
               <TransformComponent
@@ -131,7 +131,7 @@ export default function MermaidRender({
                 </motion.div>
               </TransformComponent>
             </>
-          }
+          )}
         </TransformWrapper>
       ) : loading ? (
         <motion.div
@@ -158,7 +158,7 @@ export default function MermaidRender({
         </motion.div>
       )}
       {error && (
-        <div className="w-full h-full grid place-items-center text-red-600">
+        <div className="  h-full grid place-items-center text-red-600">
           {error}
         </div>
       )}

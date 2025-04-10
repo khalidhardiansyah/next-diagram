@@ -1,7 +1,7 @@
 "use client";
 import DownloadButton from "@/components/download-button";
 import MermaidRender, { Handle } from "@/components/mermaid-render";
-import { useState, FormEvent, useRef, useEffect } from "react";
+import { useState, FormEvent, useRef } from "react";
 import GenerateHeader from "@/components/generate-header";
 import GenerateForm from "@/components/generate-form";
 export default function Home() {
@@ -36,10 +36,6 @@ export default function Home() {
   function download() {
     mermaid.current?.download();
   }
-
-  useEffect(() => {
-    console.log(loading);
-  }, [loading]);
 
   return (
     <main className=" min-h-screen min-w-screen grid justify-items-center ">
