@@ -51,24 +51,34 @@ export default function MermaidRender({
   );
 
   useEffect(() => {
-    const drawDiagram = async function () {
-      const element = document.querySelector(".mermaid");
+    let isMounted = true;
+
+    const drawDiagram = async () => {
+      if (!mermaidRef.current) return;
       setError("");
       try {
         const graph = `${graphContent}`;
         typeDiagram.current = mermaid.detectType(graph);
-        const { svg } = await mermaid.render("mermaid", graph);
-        if (element) {
-          element.innerHTML = svg;
+
+        const uniqueId = "mermaid-" + Date.now();
+
+        const { svg } = await mermaid.render(uniqueId, graph);
+
+        if (isMounted && mermaidRef.current) {
+          mermaidRef.current.innerHTML = svg;
         }
-      } catch (error) {
-        setError("Error silahkan generate lagi");
+      } catch (err) {
+        if (isMounted) setError("Error silahkan generate lagi");
       }
     };
 
     if (syntax) {
       drawDiagram();
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [syntax, graphContent]);
 
   useImperativeHandle(

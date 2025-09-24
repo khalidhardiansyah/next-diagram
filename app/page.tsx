@@ -27,6 +27,7 @@ export default function Home() {
         body: formData,
       });
       const data = await response.json();
+
       setResponse(data.data);
       setShow(true);
       setLoading(false);
